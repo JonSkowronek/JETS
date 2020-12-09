@@ -1,3 +1,5 @@
+this is a bunch of testing and error stuff for threading
+
 new start of the thread
 sleeping for 1 sec now
 sleeping for 1 sec now
