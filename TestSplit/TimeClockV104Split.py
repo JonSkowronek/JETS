@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 __author__ = "Nathan Malicki"
-__version__ = "1.01"
+__version__ = "1.05"
 __maintainer__ = "Nathan Malicki"
 __email__ = "ntm5579@gmail.com"
 __status__ = "development"
@@ -14,6 +14,7 @@ from time import *
 import random
 from EmployeeEditor import *
 from EmployeeEditor import employeeList
+import EmployeeData
 #from AudioSettings import *
 
 ###############################
@@ -331,7 +332,14 @@ windowElements.append(mainframe)
 #keepsleeping and other stuff has to be figured out
 threadObjList = []
 keepSleeping = TRUE
+
+#when done with this method remove the currentEmployee = ___ code in the last few lines
 def clockIn():
+    global currentEmployee
+    EmployeeData.processClockIn(currentEmployee)
+
+    #code in production for threading, used to auto sign out after a specified amount of time., add this code to any of the buttons on the main screen(Clock out Button, etc).
+    """
     global threadObjList
     global keepSleeping
     keepSleeping = FALSE
@@ -340,15 +348,22 @@ def clockIn():
     threadObjList.append(ThreadObj())
     print(threadObjList[len(threadObjList) - 1].num)
     threadObjList[len(threadObjList) - 1].thread.start()
+    """
+    #To Be Done: disable the buttons accordingly when they are clicked to prevent an error from setting current employee to None
 
 #button used to clock in, disabled until employee taps/swipe card
-clockInButton = Button(mainframe, fg=textColor, text="Clock In", width="22", height= "11", bg=clockInColor, command=clockIn , state=tk.DISABLED, relief=FLAT)
+clockInButton = Button(mainframe, fg=textColor, text="Clock In", width="22", height= "11", bg=clockInColor, command=clockIn, state=tk.DISABLED, relief=FLAT)
 clockInButton['font'] = font.Font(size="30")
 clockInButton.grid(column=0,row=0)
 windowElements.append(clockInButton)
 
+def clockOut():
+    global currentEmployee
+    EmployeeData.processClockOut(currentEmployee)
+    #To Be Done: disable clock out button when card is swiped, only enable the sign out button when the person who is logged in is currently clocked in
+
 #button used to clock out, disabled until employee taps/swipe card
-clockOutButton = Button(mainframe, fg=textColor, text="Clock Out", width="22", height= "11",  bg=clockOutColor, state=tk.DISABLED, relief=FLAT)
+clockOutButton = Button(mainframe, fg=textColor, text="Clock Out", width="22", height= "11",  bg=clockOutColor, command=clockOut, state=tk.DISABLED, relief=FLAT)
 clockOutButton.grid(column=1,row=0)
 clockOutButton['font'] = font.Font(size="30")
 windowElements.append(clockOutButton)
@@ -361,6 +376,7 @@ windowElements.append(adminLoginWindowButton)
 
 ########################
 #all for testing, switch buttons to enable when I don't have cards or nfc reader. Should be deleted when nfc is fully implemented.
+#threading has been disbaled for now to test other methods
 def quick():
     #put something to start thread/process here
     if(clockInButton['state'] == NORMAL):
@@ -369,7 +385,7 @@ def quick():
     else:
         clockInButton.config(state=NORMAL)
         clockOutButton.config(state=NORMAL)
-        waitThread.start()
+        #waitThread.start()
 
 enableButtonsButtonWindowButton = Button(mainframe, fg=textColor, text="Enable", width="85", height="2", bg= "pink",  command=quick, relief=FLAT)
 enableButtonsButtonWindowButton['font'] = font.Font(size="16")
@@ -545,5 +561,8 @@ waitThread = Thread(target= waitForSignout)
 #values for when the id is scanned.
 currentNFCid = 0
 currentEmployee = None
+#for testing, delete this when the nfc is working
+currentEmployee = defaultEmployee()
+employeeList.append(currentEmployee)
 
 window.mainloop()
