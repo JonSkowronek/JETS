@@ -1,9 +1,11 @@
 import random
 import calendar
+import pickle
 #employee stuff
-employeeList = []
+
 #may need to fix the next line
-employeeList = pickel.load(employeelist, open("employeeData.dat", "rb"))
+
+#employeeList = pickle.load(employeelist, open("employeeData.dat", "rb"))
 
 #object that represents employees. Holds their name and settings so the device can change settings when they sign in.
 class Employee(object):
@@ -26,6 +28,7 @@ class Employee(object):
 def defaultEmployee():
     return Employee("Steve", "Johnson", "dark", "partial")
 
+employeeList = [defaultEmployee()]
 #################
 #used to look up the employee based on id number, may want to make methods that return x data of the employee when given their id number, might want to declare these methods much higher.
 def getEmployeeObject(id):

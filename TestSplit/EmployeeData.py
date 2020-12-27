@@ -41,7 +41,8 @@ def processClockOut(employee):
     except KeyError:
         print("Error, the key did not match any dates in the database of the retrieval is messed up")
 
-    pickle.dump(employeelist, open("employeeData.dat", "wb"))
+    #current issue: NameError: name 'employeelist' is not defined
+    #pickle.dump(employeelist, open("employeeData.dat", "wb"))
 
     #how to access the info for an employee on a date: Employee.hours[date(2020, 12, 26)]
     #might not need this

@@ -15,20 +15,11 @@ import random
 from EmployeeEditor import *
 from EmployeeEditor import employeeList
 import EmployeeData
+#this might cause circular import
 #from AudioSettings import *
 
-###############################
-#pickle db stuff
-
-
-
-
-
-
 #################################
-#colorblind and theme stuff
-#colorblind mode vars
-#link for python color names: https://python-graph-gallery.com/wp-content/uploads/100_Color_names_python.png
+#colorblind and theme stuff, link for python color names: https://python-graph-gallery.com/wp-content/uploads/100_Color_names_python.png
 bgColor = "#4d4c4c" #background color for windows and frames
 textColor = "white" #color for normal text, text on buttons, labels, etc.
 buttonColor = "slateblue" #color for buttons
@@ -160,19 +151,7 @@ def addPerson():
     makeEmployeeButton.grid(column=0, row = 10, columnspan=2, padx= 5)
     windowElements.append(makeEmployeeButton)
 
-    #sets Visual Settings for when employee objects are created, handles button sinking and disabling
-    def setColorModewithButtons(color):
-        global visualSetting
-        if(color == "dark"):
-            #sets the selected button to sunken, every other button should be reset to normal state and flat
-            darkModeButton.config(relief=SUNKEN, state = DISABLED)
-            lightModeButton.config(relief=FLAT, state = NORMAL)
-            visualSetting = "dark"
-        elif(color == "light"):
-            lightModeButton.config(relief=SUNKEN, state = DISABLED)
-            darkModeButton.config(relief=FLAT, state = NORMAL)
-            visualSetting = "light"
-        #add more options for colormodes here
+    #################
 
     darkModeButton = Button(addPersonWindow, fg=textColor, text="Dark Mode", padx="5", pady="5", bg= buttonColor, command= lambda: setColorModewithButtons("dark"), relief=SUNKEN, state=DISABLED)
     darkModeButton.grid(column=0, row = 5, pady= 5)
@@ -336,6 +315,8 @@ keepSleeping = TRUE
 #when done with this method remove the currentEmployee = ___ code in the last few lines
 def clockIn():
     global currentEmployee
+    clockOutButton.config(state= tk.NORMAL)
+    clockInButton.config(state= tk.DISABLED)
     EmployeeData.processClockIn(currentEmployee)
 
     #code in production for threading, used to auto sign out after a specified amount of time., add this code to any of the buttons on the main screen(Clock out Button, etc).
@@ -359,6 +340,9 @@ windowElements.append(clockInButton)
 
 def clockOut():
     global currentEmployee
+    #Switches Stuff IDK
+    clockInButton.config(state= tk.NORMAL)
+    clockOutButton.config(state= tk.DISABLED)
     EmployeeData.processClockOut(currentEmployee)
     #To Be Done: disable clock out button when card is swiped, only enable the sign out button when the person who is logged in is currently clocked in
 
@@ -377,17 +361,17 @@ windowElements.append(adminLoginWindowButton)
 ########################
 #all for testing, switch buttons to enable when I don't have cards or nfc reader. Should be deleted when nfc is fully implemented.
 #threading has been disbaled for now to test other methods
-def quick():
+def clockingButtonToggle():
     #put something to start thread/process here
     if(clockInButton['state'] == NORMAL):
         clockInButton.config(state=DISABLED)
         clockOutButton.config(state=DISABLED)
     else:
         clockInButton.config(state=NORMAL)
-        clockOutButton.config(state=NORMAL)
+        #clockInBUtton.config(state=DISABLED), this should stay commented, but is here for testing, should only be able to clock out if you are currently clocked in
         #waitThread.start()
 
-enableButtonsButtonWindowButton = Button(mainframe, fg=textColor, text="Enable", width="85", height="2", bg= "pink",  command=quick, relief=FLAT)
+enableButtonsButtonWindowButton = Button(mainframe, fg=textColor, text="Enable", width="85", height="2", bg= "pink",  command=clockingButtonToggle, relief=FLAT)
 enableButtonsButtonWindowButton['font'] = font.Font(size="16")
 enableButtonsButtonWindowButton.grid(column=0, columnspan = 2, row=2)
 windowElements.append(enableButtonsButtonWindowButton)
@@ -463,8 +447,9 @@ defaultLightModeButton.grid(column= 0, row = 2, pady= 5)
 windowElements.append(defaultLightModeButton)
 
 #this is to fill space and make the ui look better, should be move or removed if there are more options added to the defaults page
-defaultSpacingLabel = Label(colorBlindSettingsFrame, fg=bgColor, text="f", pady="5", bg= bgColor)
+defaultSpacingLabel = Label(colorBlindSettingsFrame, fg=bgColor, text=" ", pady="5", bg= bgColor)
 defaultSpacingLabel.grid(column= 0, row = 3, pady= 5)
+windowElements.append(defaultSpacingLabel)
 
 #subframe of settingsframe that contains the label and the buttons of the audio options
 audioSettingsFrame = Frame(settingsFrame, bg= bgColor)
@@ -515,8 +500,12 @@ windowElements.append(defaultNoAudioButton)
 
 #button that takes you back to the admin screen from the admin settings menu.
 backToAdmin = Button(settingsFrame, fg=textColor, text="Back", padx="5", pady="5", bg= buttonColor, command=makeAdminFrame, relief=FLAT)
-backToAdmin.grid(column= 0, row = 1, columnspan=2, pady= 5)
+backToAdmin.grid(column= 1, row = 1, pady= 5)
 windowElements.append(backToAdmin)
+
+saveButton = Button(settingsFrame, fg=textColor, text="Save", padx="5", pady="5", bg= buttonColor, command=updateSettings, relief=FLAT)
+saveButton.grid(column= 0, row = 1, pady= 5)
+windowElements.append(saveButton)
 
 #attempt to make different threads for each object so a new object can be made each time a new thread is needed.
 count = -1
