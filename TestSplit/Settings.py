@@ -1,5 +1,4 @@
 from tkinter import *
-from TimeClockV104Split import *
 
 tempAudioSetting = "No Audio"
 tempVisualSetting = "darks"

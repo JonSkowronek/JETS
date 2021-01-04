@@ -15,6 +15,8 @@ import random
 from EmployeeEditor import *
 from EmployeeEditor import employeeList
 import EmployeeData
+from Settings import *
+
 #this might cause circular import
 #from AudioSettings import *
 
@@ -58,6 +60,8 @@ def colorBlindMode(color):
 windowElements= []
 addPersonElements= []
 removePersonElements= []
+#may need to switch this to a window
+exportSettingsWindow= []
 
 #needs to be restructed for the
 #switches colors stored in vars to the correct ones then loops through all widgets and changes the colors of the tkninter widgets
@@ -66,30 +70,67 @@ def changeColorMode(color):
     #switches the values stored to the correct theme/mode
     colorBlindMode(color)
     #goes through list of elements in windowElements
-    for i in range(len(windowElements)):
-        #checks for clockIn/OutButtons bc they are a different color than normal buttons, if specific elements need other colors, check for that specific instance inside their widget type
-        if(isinstance(windowElements[i], Button)):
-            if(windowElements[i] == clockInButton):
+    if(True):
+        for i in range(len(windowElements)):
+            #checks for clockIn/OutButtons bc they are a different color than normal buttons, if specific elements need other colors, check for that specific instance inside their widget type
+            if(isinstance(windowElements[i], Button)):
+                if(windowElements[i] == clockInButton):
+                    clockInButton.config(fg=textColor,bg= clockInColor)
+                elif(windowElements[i] == clockOutButton):
+                    clockOutButton.config(fg=textColor,bg= clockOutColor)
+                else:
+                    windowElements[i].config(fg= textColor, bg=buttonColor)
+            elif(isinstance(windowElements[i], Frame)):
+                windowElements[i].config(bg=bgColor, highlightbackground= textBoxBgColor)
+            elif(isinstance(windowElements[i], Label)):
+                windowElements[i].config(fg=textColor,bg=bgColor, highlightbackground= textBoxBgColor)
+            elif(isinstance(windowElements[i], Text)):
+                windowElements[i].config(fg=textColor,bg=textBoxBgColor)
+            else:
+                windowElements[i].config(fg= textColor, bg=bgColor)
+            window.config(bg = bgColor)
+    elif(True):    
+        #this needs to change
+        for i in range(len(addPersonElements)):
+            if(isinstance(addPersonElements[i], Button)):
+                if(addPersonElements[i] == clockInButton):
+                    clockInButton.config(fg=textColor,bg= clockInColor)
+                elif(addPersonElements[i] == clockOutButton):
+                    clockOutButton.config(fg=textColor,bg= clockOutColor)
+                else:
+                    addPersonElements[i].config(fg= textColor, bg=buttonColor)
+            elif(isinstance(addPersonElements[i], Frame)):
+                addPersonElements[i].config(bg=bgColor, highlightbackground= textBoxBgColor)
+            elif(isinstance(addPersonElements[i], Label)):
+                addPersonElements[i].config(fg=textColor,bg=bgColor, highlightbackground= textBoxBgColor)
+            elif(isinstance(addPersonElements[i], Text)):
+                addPersonElements[i].config(fg=textColor,bg=textBoxBgColor)
+            else:
+                addPersonElements[i].config(fg= textColor, bg=bgColor)
+            addPersonWindow.config(bg = bgColor)
+    elif(True):
+        #this needs to change
+        if(isinstance(removePersonElements[i], Button)):
+            if(removePersonElements[i] == clockInButton):
                 clockInButton.config(fg=textColor,bg= clockInColor)
-            elif(windowElements[i] == clockOutButton):
+            elif(removePersonElements[i] == clockOutButton):
                 clockOutButton.config(fg=textColor,bg= clockOutColor)
             else:
-                windowElements[i].config(fg= textColor, bg=buttonColor)
-        elif(isinstance(windowElements[i], Frame)):
-            windowElements[i].config(bg=bgColor, highlightbackground= textBoxBgColor)
-        elif(isinstance(windowElements[i], Label)):
-            windowElements[i].config(fg=textColor,bg=bgColor, highlightbackground= textBoxBgColor)
-        elif(isinstance(windowElements[i], Text)):
-            windowElements[i].config(fg=textColor,bg=textBoxBgColor)
+                removePersonElements[i].config(fg= textColor, bg=buttonColor)
+        elif(isinstance(removePersonElements[i], Frame)):
+            removePersonElements[i].config(bg=bgColor, highlightbackground= textBoxBgColor)
+        elif(isinstance(removePersonElements[i], Label)):
+            removePersonElements[i].config(fg=textColor,bg=bgColor, highlightbackground= textBoxBgColor)
+        elif(isinstance(removePersonElements[i], Text)):
+            removePersonElements[i].config(fg=textColor,bg=textBoxBgColor)
         else:
-            windowElements[i].config(fg= textColor, bg=bgColor)
-        window.config(bg = bgColor)
-    print("changeColorMode()")
+            removePersonElements[i].config(fg= textColor, bg=bgColor)
+        removePersonWindow.config(bg = bgColor)
 
+    print("changeColorMode()")
 
 #################################
 checkBoxList = []
-
 
 ####################################
 #admin settings
@@ -219,7 +260,7 @@ def removePerson():
 def Settings():
     mainframe.forget()
     adminFrame.forget()
-    signOutButton.forget()
+    exportSettingsFrame.forget()
     settingsFrame.pack()
     print("Settings()")
 
@@ -230,52 +271,18 @@ exportMethod = "wifi"
 def exportData():
     #to put data in the dp: pickle.dump(employeeList, open("employeeData.dat"),"wb")
     #to retrieve: pickel.load(open(employeeData.dat),"rb")
+    '''
     exportSettingsWindow = Tk()
     exportSettingsWindow.title("Export Settings")
-    exportSettingsWindow.geometry("400x200")
+    exportSettingsWindow.geometry("275x200")
     exportSettingsWindow.resizable(width=False, height=False)
     exportSettingsWindow.config(bg=bgColor)
-
-    exportMethodLabel = Label(exportSettingsWindow, fg= textColor, text= "Choose Export Method", padx="5", pady="5", bg= bgColor, relief=FLAT)
-    exportMethodLabel.pack()
-    windowElements.append(exportMethodLabel)
     
-    def send(method):
-        if(method == "wifi"):
-            print("Method: Wifi. This is where we send it to excel or whatever")
-        elif(method == "usb"):
-            print("Method: USB. This is where we send it to excel or whatever")
-
-    def switchExportMethod(exportMethodarg):
-        global exportMethod
-        exportMethod = exportMethodarg
-        if(exportMethod == "wifi"):
-            #sets the selected button to sunken, every other button should be reset to normal state and flat
-            exportWithWifiButton.config(relief=SUNKEN, state = DISABLED)
-            exportWithUSBButton.config(relief=FLAT,state = NORMAL)
-        elif(exportMethod == "usb"):
-            exportWithWifiButton.config(relief=FLAT, state = NORMAL)
-            exportWithUSBButton.config(relief=SUNKEN, state = DISABLED)
-
-    def exportDoneButton():
-        global exportMethod
-        send(exportMethod)
-        exportSettingsWindow.destroy()
-
-    exportWithWifiButton = Button(exportSettingsWindow, fg= textColor, text= "Wifi", padx="5", pady="5", bg= buttonColor, command= lambda: switchExportMethod("wifi"), relief=SUNKEN, state= DISABLED)
-    exportWithWifiButton.pack(pady= "5")
-    windowElements.append(exportWithWifiButton)
-
-    exportWithUSBButton = Button(exportSettingsWindow, fg= textColor, text= "Usb", padx="5", pady="5", bg= buttonColor, command= lambda: switchExportMethod("usb"), relief=FLAT)
-    exportWithUSBButton.pack(pady= "5")
-    windowElements.append(exportWithUSBButton)
-
-    exportDoneButton = Button(exportSettingsWindow, fg= textColor, text= "Done", padx="5", pady="5", bg= buttonColor, command=exportDoneButton, relief=FLAT)
-    exportDoneButton.pack(pady= "15")
-    windowElements.append(exportDoneButton)
-
-    #this is where the actual exporting happens
-    print("Test exportData")
+    '''
+    mainframe.forget()
+    adminFrame.forget()
+    settingsFrame.forget()
+    exportSettingsFrame.pack()
 
 ################################################
 #methods that switch the frame being displayed.
@@ -283,13 +290,13 @@ def exportData():
 def makeAdminFrame():
     mainframe.forget()
     settingsFrame.forget()
+    exportSettingsFrame.forget()
     adminFrame.pack()
-    signOutButton.pack()
 #brings up the main menu (employee facing screen)
 def mainMenu():
     adminFrame.forget()
-    signOutButton.forget()
     settingsFrame.forget()
+    exportSettingsFrame.forget()
     mainframe.pack()
 #########################################
 #main window setup
@@ -405,7 +412,8 @@ exportButton.grid(column= 1, row = 1, padx = 10, pady = 10)
 windowElements.append(exportButton)
 
 #used by the admin to sign out and returns to the main menu (employee screen), pack() above for arrangement reasons.
-signOutButton = Button(window, fg=textColor, text="Sign Out", padx = "5", pady= "5", bg= buttonColor, command=mainMenu, relief=FLAT)
+signOutButton = Button(adminFrame, fg=textColor, text="Sign Out", padx = "5", pady= "5", bg= buttonColor, command=mainMenu, relief=FLAT)
+signOutButton.grid(column = 0, row = 3, columnspan = 2)
 windowElements.append(signOutButton)
 ###########################################
 
@@ -506,6 +514,60 @@ windowElements.append(backToAdmin)
 saveButton = Button(settingsFrame, fg=textColor, text="Save", padx="5", pady="5", bg= buttonColor, command=updateSettings, relief=FLAT)
 saveButton.grid(column= 0, row = 1, pady= 5)
 windowElements.append(saveButton)
+
+
+#####################################################
+exportSettingsFrame = Frame(window, bg= bgColor)
+
+exportLabelSpacing = Label(exportSettingsFrame, bg= bgColor)
+exportLabelSpacing.grid(column= 0, row= 0)
+
+exportMethodLabel = Label(exportSettingsFrame, fg= textColor, text= "Choose Export Method", padx="5", pady="5", bg= bgColor, relief=FLAT)
+exportMethodLabel.grid(column= 1 , row= 0, columnspan = 2, pady= "5")
+windowElements.append(exportMethodLabel)
+
+def send(method):
+    if(method == "wifi"):
+        print("Method: Wifi. This is where we send it to excel or whatever")
+    elif(method == "usb"):
+        print("Method: USB. This is where we send it to excel or whatever")
+
+def switchExportMethod(exportMethodarg):
+    global exportMethod
+    exportMethod = exportMethodarg
+    if(exportMethod == "wifi"):
+        #sets the selected button to sunken, every other button should be reset to normal state and flat
+        exportWithWifiButton.config(relief=SUNKEN, state = DISABLED)
+        exportWithUSBButton.config(relief=FLAT,state = NORMAL)
+    elif(exportMethod == "usb"):
+        exportWithWifiButton.config(relief=FLAT, state = NORMAL)
+        exportWithUSBButton.config(relief=SUNKEN, state = DISABLED)
+
+
+exportWithWifiButton = Button(exportSettingsFrame, fg= textColor, text= "Wifi", padx="5", pady="5", bg= buttonColor, command= lambda: switchExportMethod("wifi"), relief=SUNKEN, state= DISABLED)
+exportWithWifiButton.grid(column= 1, row= 1, columnspan = 2, pady= "5")
+windowElements.append(exportWithWifiButton)
+
+exportWithUSBButton = Button(exportSettingsFrame, fg= textColor, text= "Usb", padx="5", pady="5", bg= buttonColor, command= lambda: switchExportMethod("usb"), relief=FLAT)
+exportWithUSBButton.grid(column= 1, row= 2, columnspan = 2, pady= "5")
+windowElements.append(exportWithUSBButton)
+
+def exportExit(response):
+    if(response == "done"):
+        exportSettingsFrame.forget()
+        adminFrame.pack()
+        #add another line here to activate a function that exports the data
+    else:
+        exportSettingsFrame.forget()
+        adminFrame.pack()
+
+exportDoneButton = Button(exportSettingsFrame, fg= textColor, text= "Done", padx="5", pady="5", bg= buttonColor, command= lambda: exportExit("done"), relief=FLAT)
+exportDoneButton.grid(column= 2, row= 3, pady= "5")
+windowElements.append(exportDoneButton)
+
+exportCancelButton = Button(exportSettingsFrame, fg= textColor, text= "Cancel", padx= "5", pady = "5", bg= buttonColor, command= lambda: exportExit("cancel"), relief=FLAT)
+exportCancelButton.grid(column= 1, row= 3, pady= "5")
+windowElements.append(exportCancelButton)
 
 #attempt to make different threads for each object so a new object can be made each time a new thread is needed.
 count = -1
