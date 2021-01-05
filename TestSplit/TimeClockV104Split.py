@@ -251,7 +251,12 @@ def removePerson():
         #checkbox.pack(anchor= N)
         checkbox.pack(anchor= CENTER)
 
-    completeRemoveButton = Button(removePersonFrame, fg= textColor, text= "Done", bg= buttonColor, relief= FLAT)
+    def removePersonComplete():
+        #!!! need to change all destroy to something that lets you open the window back up
+        removePersonWindow.destroy()
+        print("Remove Person Complete")
+
+    completeRemoveButton = Button(removePersonFrame, fg= textColor, text= "Done", bg= buttonColor, command= removePersonComplete, relief= FLAT)
     completeRemoveButton.pack(side= BOTTOM)
 
     print("removePerson()")
